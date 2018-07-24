@@ -17,7 +17,7 @@ function run_eosio()
 
     args="$args -v $project_docker_runtime_dir/eosio/data:/mnt/dev/data"
 
-    args="$args -v $project_docker_eosio_dir/conf:/mnt/dev/config"
+    args="$args -v $project_docker_persistent_dir/keosd:/mnt/dev/config"
 
     run_cmd "docker run -d $args --name $eosio_container $eosio_image \
     /bin/bash -c 'nodeos -e -p eosio \

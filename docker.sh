@@ -33,26 +33,32 @@ project_docker_persistent_dir="$project_docker_path/persistent"     # app persis
 source $project_docker_path/eosio/container.sh
 
 
+function init()
+{
+    recursive_mkdir "$project_docker_persistent_dir/keosd"
+
+    echo wallet_dir=$project_docker_persistent_dir/wallets > $project_docker_persistent_dir/config
+
+    run_cmd "replace_template_key_value $project_docker_persistent_dir/config $project_docker_eosio_dir/conf/config.ini $project_docker_persistent_dir/keosd/config.ini"
+}
+
 function run()
 {
+    init
     run_eosio
 }
 
 function restart()
 {
     clean
-    run_eosio
+    run
 }
 
 function clean()
 {
     rm_eosio
     clean_runtime
-}
-
-function create_wallet()
-{
-  run_cmd "cd"
+    clean_persistent
 }
 
 function clean_runtime()
@@ -61,11 +67,12 @@ function clean_runtime()
     run_cmd "rm -rf $project_docker_runtime_dir/eosio/data"
     run_cmd "rm -rf $project_docker_runtime_dir/eosio/work"
 }
-#
-# function clean_persistent()
-# {
-#
-# }
+
+function clean_persistent()
+{
+  run_cmd "rm -f $project_docker_persistent_dir/config"
+  run_cmd "rm -rf $project_docker_persistent_dir/keosd"
+}
 
 function help()
 {
