@@ -73,6 +73,7 @@ function clean_persistent()
 {
   run_cmd "rm -f $project_docker_persistent_dir/config"
   run_cmd "rm -rf $project_docker_persistent_dir/keosd"
+  run_cmd "rm -rf $project_docker_persistent_dir/contracts"
 }
 
 function help()
@@ -86,12 +87,12 @@ cat <<EOF
         restart
         clean
 
-        create_wallet
+        send_cmd_to_eos_container
 
 EOF
 }
 
 action=${1:-help}
-ALL_COMMANDS="run restart clean create_wallet"
+ALL_COMMANDS="run restart clean send_cmd_to_eos_container"
 list_contains ALL_COMMANDS "$action" || action=help
 $action "$@"
