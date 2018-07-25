@@ -18,17 +18,10 @@ function run_eosio()
     args="$args -v $project_docker_runtime_dir/eosio/data:/mnt/dev/data"
 
     args="$args -v $project_docker_persistent_dir/keosd:/mnt/dev/config"
-
+    
     run_cmd "docker run -d $args --name $eosio_container $eosio_image \
-    /bin/bash -c 'nodeos -e -p eosio \
-    --plugin eosio::wallet_api_plugin \
-    --plugin eosio::wallet_plugin \
-    --plugin eosio::producer_plugin \
-    --plugin eosio::history_plugin \
-    --plugin eosio::chain_api_plugin \
-    --plugin eosio::history_api_plugin \
-    --plugin eosio::http_plugin \
-    -d /mnt/dev/data \
+    /bin/bash -c 'nodeos -d \
+    /mnt/dev/data \
     --config-dir /mnt/dev/config \
     --http-server-address=0.0.0.0:8888 \
     --access-control-allow-origin=* --contracts-console --http-validate-host=false'"

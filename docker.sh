@@ -24,6 +24,7 @@ eosio_container=$app-eosio
 
 # container dir
 
+project_eosio_dir="$project_docker_path/eos"
 project_docker_eosio_dir="$project_docker_path/eosio"
 
 project_docker_runtime_dir="$project_docker_path/runtime"           # app runtime
