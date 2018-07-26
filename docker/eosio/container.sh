@@ -41,3 +41,10 @@ function send_cmd_to_eos_container()
     local cmd=$2
     run_cmd "docker exec -it $eosio_container bash -c '$cmd'"
 }
+
+function cpp()
+{
+    local dir=$2
+    local cmd=$3
+    run_cmd "docker exec -it $eosio_container bash -c 'cd $dir; eosiocpp $cmd'"
+}

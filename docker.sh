@@ -17,7 +17,7 @@ KEOSD_PORT=$(read_kv_config .env KEOSD_PORT)
 app_basic_name=smart-contract
 app="$developer_name-$app_basic_name"
 
-eosio_image=eosio/eos-dev
+eosio_image=eosio/eos-dev:v1.1.1
 
 # container
 eosio_container=$app-eosio
@@ -86,6 +86,7 @@ cat <<EOF
         run
         restart
         clean
+        cpp
 
         send_cmd_to_eos_container
 
@@ -93,6 +94,6 @@ EOF
 }
 
 action=${1:-help}
-ALL_COMMANDS="run restart clean send_cmd_to_eos_container"
+ALL_COMMANDS="run restart clean cpp send_cmd_to_eos_container"
 list_contains ALL_COMMANDS "$action" || action=help
 $action "$@"
