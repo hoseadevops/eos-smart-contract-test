@@ -1,4 +1,11 @@
+
+
 # eos-smart-contract
+    
+### dependency 
+    docker
+### env
+    mac
 
 ```
 sh docker.sh
