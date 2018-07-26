@@ -1,6 +1,5 @@
 
-
-# eos smart contract docker development environment
+# EOS 本地单节点测试网络智能合约开发 hello world
 
 ### dependency
     docker
