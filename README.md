@@ -1,6 +1,6 @@
 
 
-# eos-smart-contract
+# eos smart contract docker development environment
     
 ### dependency 
     docker
