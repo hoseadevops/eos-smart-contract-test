@@ -22,6 +22,7 @@ function run_eosio()
     args="$args -v $project_docker_persistent_dir/contracts:/mnt/dev/contracts"
 
     local cmd1="bash docker.sh send_cmd_to_eos_container 'cp -R /contracts /mnt/dev'"
+
     run_cmd "docker run -d $args --name $eosio_container $eosio_image \
     /bin/bash -c 'nodeos -d \
     /mnt/dev/data \

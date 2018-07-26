@@ -23,7 +23,6 @@ eosio_image=eosio/eos-dev:v1.1.1
 eosio_container=$app-eosio
 
 # container dir
-
 project_eosio_dir="$project_docker_path/eos"
 project_docker_eosio_dir="$project_docker_path/eosio"
 
@@ -54,6 +53,7 @@ function restart()
     clean
     run
 }
+
 
 function clean()
 {
