@@ -1,8 +1,8 @@
 
 
 # eos smart contract docker development environment
-    
-### dependency 
+
+### dependency
     docker
 ### env
     mac
@@ -20,8 +20,8 @@ sh docker.sh
         cpp
 
         send_cmd_to_eos_container
-        
-        
+
+
 sh docker.sh run
 
 # 测试RPC
@@ -95,7 +95,7 @@ cleos get account hex
 
 # 翻墙加速【用现有镜像可以不做】
 git clone https://github.com/EOSIO/eos --recursive
-下载失败 可以继续实行：git submodule update --init --recursive 
+下载失败 可以继续实行：git submodule update --init --recursive
 # alias eosiocpp 【用现有镜像可以不做】
 alias eosiocpp='docker exec hexing-smart-contract-eosio eosiocpp'
 
@@ -124,8 +124,8 @@ cleos push action hello.code hi '["user"]' -p user@active
 cleos push action hello.code hi '["hex"]' -p user@active
 
 
-## eosjs 与合约交互 
-https://cloud.tencent.com/developer/article/1144036
+## eosjs 与合约交互
+
 
 
 
