@@ -21,7 +21,7 @@ function run_eosio()
 
     args="$args -v $project_docker_persistent_dir/contracts:/mnt/dev/contracts"
 
-    local cmd1="bash docker.sh send_cmd_to_eos_container 'cp -R /contracts /mnt/dev'"
+    local cmd1="bash eos.sh send_cmd_to_eos_container 'cp -R /contracts /mnt/dev'"
 
     run_cmd "docker run -d $args --name $eosio_container $eosio_image \
     /bin/bash -c 'nodeos -d \
@@ -48,4 +48,16 @@ function cpp()
     local dir=$2
     local cmd=$3
     run_cmd "docker exec -it $eosio_container bash -c 'cd $dir; eosiocpp $cmd'"
+}
+
+function cli()
+{
+    local cmd=$2
+    run_cmd "docker exec -it $eosio_container bash -c '/opt/eosio/bin/cleos -u http://0.0.0.0:8888 --wallet-url http://0.0.0.0:8888 $cmd'"
+}
+
+_init_contract()
+{
+  _open_un_lock_wallet
+  run_cmd "sh eos.sh cli 'set contract eosio $project_docker_persistent_dir/contracts/eosio.bios -x 1000s -p eosio@active'"
 }
