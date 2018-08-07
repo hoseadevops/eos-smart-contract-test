@@ -12,8 +12,8 @@ namespace eosio
         public:
             pause( account_name self ):token(self){}
 
-            void setpause( bool pause );
-            bool getpause();
+            void pausable( bool paused );
+            bool get_pause();
 
             void transfer( account_name from,
                            account_name to,
@@ -34,5 +34,6 @@ namespace eosio
         private:
             bool is_pause = false;
     };
+
 
 }

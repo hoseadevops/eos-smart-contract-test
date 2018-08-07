@@ -2,16 +2,16 @@
 
 namespace eosio
 {
-    void pause::setpause( bool pause )
+    void pause::pausable( bool paused )
     {
-        is_pause = pause;
+        is_pause = paused;
     }
 
-    bool pause::getpause()
+    bool pause::get_pause()
     {
         return is_pause;
     }
 
 }
 
-EOSIO_ABI( eosio::pause, (setpause) )
+EOSIO_ABI( eosio::pause, (pausable) )
