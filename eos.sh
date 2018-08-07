@@ -7,12 +7,8 @@ project_docker_path="$project_path/docker"                          # 项目dock
 source $project_docker_path/bash.sh                                 # 基础函数
 developer_name=$('whoami');                                         # 开发者
 
-#----------------------
-# 如果有配置中心 在这里创建 .env
-#----------------------
 
 NODEOS_PORT=$(read_kv_config .env NODEOS_PORT)
-KEOSD_PORT=$(read_kv_config .env KEOSD_PORT)
 
 app_basic_name=smart-contract
 app="$developer_name-$app_basic_name"
@@ -49,9 +45,9 @@ function run()
     run_eosio
 
     _wallet_create
+    _init_account
 
     _init_contract
-    _init_account
 }
 
 function restart()
@@ -92,16 +88,14 @@ cat <<EOF
         run
         restart
         clean
+
         cpp
         cli
-
-        key_create
-        send_cmd_to_eos_container
 
 EOF
 }
 
 action=${1:-help}
-ALL_COMMANDS="run restart clean cpp cli key_create send_cmd_to_eos_container _get_password"
+ALL_COMMANDS="run restart clean cpp cli key_create send_cmd_to_eos_container"
 list_contains ALL_COMMANDS "$action" || action=help
 $action "$@"
