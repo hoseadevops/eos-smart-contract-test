@@ -16,7 +16,9 @@ sh eos.sh
         run
         restart
         clean
+
         cpp
+        cli
 
         send_cmd_to_eos_container
 
@@ -24,8 +26,16 @@ sh eos.sh
 sh eos.sh run
 
 
-## eosjs 与合约交互
+# 开发新合约
+sh eos.sh cpp 'contracts' '-n demo'
 
+
+sh eos.sh cpp 'contracts/demo' '-g demo.abi demo.cpp'
+sh eos.sh cpp 'contracts/demo' '-o demo.wast demo.cpp'
+
+sh eos.sh cli 'set contract ...'
+
+## eosjs 与合约交互
 
 
 
