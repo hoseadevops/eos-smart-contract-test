@@ -30,6 +30,7 @@ source $project_docker_path/eosio/container.sh
 source $project_docker_path/eosio/wallet.sh
 source $project_docker_path/eosio/account.sh
 
+
 function init()
 {
     recursive_mkdir "$project_docker_persistent_dir/keosd"
