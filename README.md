@@ -1,5 +1,5 @@
 
-# EOS 本地单节点测试网络智能合约开发 hello world
+# EOS 本地单节点开发智能合约环境
 
 ### dependency
     docker
