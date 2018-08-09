@@ -26,6 +26,7 @@ void token::create( account_name issuer,
        s.supply.symbol = maximum_supply.symbol;
        s.max_supply    = maximum_supply;
        s.issuer        = issuer;
+       s.pause         = false;
     });
 }
 
@@ -34,7 +35,6 @@ void token::issue( account_name to,
                   asset         quantity,
                   string        memo )
 {
-    eosio_assert( is_pause == false, "token is paused" );
     auto sym = quantity.symbol;
     eosio_assert( sym.is_valid(), "invalid symbol name" );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
@@ -44,7 +44,7 @@ void token::issue( account_name to,
     auto existing = statstable.find( sym_name );
     eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
     const auto& st = *existing;
-
+    eosio_assert( st.pause == false, "token is paused" );
     require_auth( st.issuer );
     eosio_assert( quantity.is_valid(), "invalid quantity" );
     eosio_assert( quantity.amount > 0, "must issue positive quantity" );
@@ -68,7 +68,6 @@ void token::transfer( account_name from,
                       asset        quantity,
                       string       memo )
 {
-    eosio_assert( is_pause == false, "token is paused" );
     eosio_assert( from != to, "cannot transfer to self" );
     require_auth( from );
     eosio_assert( is_account( to ), "to account does not exist");
@@ -78,7 +77,7 @@ void token::transfer( account_name from,
 
     require_recipient( from );
     require_recipient( to );
-
+    eosio_assert( st.pause == false, "token is paused" );
     eosio_assert( quantity.is_valid(), "invalid quantity" );
     eosio_assert( quantity.amount > 0, "must transfer positive quantity" );
     eosio_assert( quantity.symbol == st.supply.symbol, "symbol precision mismatch" );
@@ -120,10 +119,18 @@ void token::add_balance( account_name owner, asset value, account_name ram_payer
    }
 }
 
-void token::pausable( bool paused )
+void token:: pause( bool pause, symbol_name sym_name )
 {
     require_auth( _self );
-    is_pause = paused;
+
+    stats statstable( _self, sym_name );
+    auto existing = statstable.find( sym_name );
+    eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before pause" );
+    const auto& st = *existing;
+
+    statstable.modify( st, 0, [&]( auto& s ) {
+       s.pause = pause;
+    });
 }
 
 } /// namespace eosio
