@@ -29,7 +29,7 @@ project_docker_persistent_dir="$project_docker_path/persistent"     # app persis
 source $project_docker_path/eosio/container.sh
 source $project_docker_path/eosio/wallet.sh
 source $project_docker_path/eosio/account.sh
-
+source $project_docker_path/eosio/contract.sh
 
 function init()
 {
@@ -93,10 +93,12 @@ cat <<EOF
         cpp
         cli
 
+        deploy
+
 EOF
 }
 
 action=${1:-help}
-ALL_COMMANDS="run restart clean cpp cli key_create send_cmd_to_eos_container"
+ALL_COMMANDS="run restart clean cpp cli deploy key_create send_cmd_to_eos_container"
 list_contains ALL_COMMANDS "$action" || action=help
 $action "$@"

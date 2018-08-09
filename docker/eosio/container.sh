@@ -60,6 +60,6 @@ _init_contract()
 {
   _open_un_lock_wallet
   run_cmd "sh eos.sh cli 'set contract eosio $project_docker_persistent_dir/contracts/eosio.bios -x 1000s -p eosio@active'"
-  _open_un_lock_wallet
-  run_cmd "sh eos.sh cli 'set contract dev.token $project_docker_persistent_dir/contracts/eosio.token -x 1000s -p dev.token@active'"
+  #_open_un_lock_wallet
+  #run_cmd "sh eos.sh cli 'set contract dev.token $project_docker_persistent_dir/contracts/eosio.token -x 1000s -p dev.token@active'"
 }
