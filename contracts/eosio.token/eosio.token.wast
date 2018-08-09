@@ -89,7 +89,6 @@
  (export "_ZN5eosio5token8transferEyyNS_5assetENSt3__112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEE" (func $_ZN5eosio5token8transferEyyNS_5assetENSt3__112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEE))
  (export "_ZN5eosio5token11sub_balanceEyNS_5assetE" (func $_ZN5eosio5token11sub_balanceEyNS_5assetE))
  (export "_ZN5eosio5token8pausableEb" (func $_ZN5eosio5token8pausableEb))
- (export "_ZN5eosio5token9get_pauseEv" (func $_ZN5eosio5token9get_pauseEv))
  (export "apply" (func $apply))
  (export "malloc" (func $malloc))
  (export "free" (func $free))
@@ -7840,11 +7839,6 @@
    (get_local $1)
   )
  )
- (func $_ZN5eosio5token9get_pauseEv (param $0 i32) (result i32)
-  (i32.load8_u offset=8
-   (get_local $0)
-  )
- )
  (func $apply (param $0 i64) (param $1 i64) (param $2 i64)
   (local $3 i32)
   (local $4 i32)
@@ -8298,7 +8292,7 @@
    )
    (i32.store8 offset=72
     (get_local $9)
-    (i32.const 0)
+    (i32.const 1)
    )
    (i64.store offset=64
     (get_local $9)

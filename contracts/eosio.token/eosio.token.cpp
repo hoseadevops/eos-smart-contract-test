@@ -39,7 +39,6 @@ void token::issue( account_name to,
     eosio_assert( sym.is_valid(), "invalid symbol name" );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
 
-
     auto sym_name = sym.name();
     stats statstable( _self, sym_name );
     auto existing = statstable.find( sym_name );
@@ -125,11 +124,6 @@ void token::pausable( bool paused )
 {
     require_auth( _self );
     is_pause = paused;
-}
-
-bool token::get_pause()
-{
-    return is_pause;
 }
 
 } /// namespace eosio

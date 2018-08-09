@@ -33,11 +33,9 @@ namespace eosio {
 
          void pausable( bool paused );
 
-         bool get_pause();
-
       private:
 
-         bool is_pause = false;
+         bool is_pause = true;
 
          struct account {
            asset balance;
