@@ -20,7 +20,7 @@ function _wallet_create()
 
     key_create
     key_create
-    
+
     run_cmd "sh eos.sh cli 'wallet create -n $name' > $project_docker_persistent_dir/wallets/${name}.password"
     run_cmd "sh eos.sh cli 'wallet import -n $name --private-key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'"
 
@@ -104,4 +104,15 @@ function _open_un_lock_wallet()
 
     sh eos.sh cli "wallet unlock -n $name --password $pwd"
   fi
+}
+
+
+open_unlock_wallet(){
+  local _name;
+  if [ ! -n "$2" ]; then
+    _name='wallet'
+  else
+    _name=$2
+  fi
+  _open_un_lock_wallet $_name
 }

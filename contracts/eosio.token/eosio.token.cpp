@@ -119,9 +119,11 @@ void token::add_balance( account_name owner, asset value, account_name ram_payer
    }
 }
 
-void token:: pause( bool pause, symbol_name sym_name )
+void token::pause( bool pause, asset value )
 {
     require_auth( _self );
+
+    symbol_name sym_name = value.symbol.name();
 
     stats statstable( _self, sym_name );
     auto existing = statstable.find( sym_name );
@@ -135,4 +137,4 @@ void token:: pause( bool pause, symbol_name sym_name )
 
 } /// namespace eosio
 
-EOSIO_ABI( eosio::token, (create)(issue)(transfer)(pausable) )
+EOSIO_ABI( eosio::token, (create)(issue)(transfer)(pause) )
