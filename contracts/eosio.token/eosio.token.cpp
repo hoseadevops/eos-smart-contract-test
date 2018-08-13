@@ -121,8 +121,6 @@ void token::add_balance( account_name owner, asset value, account_name ram_payer
 
 void token::pause( bool pause, asset value )
 {
-    require_auth( _self );
-
     symbol_name sym_name = value.symbol.name();
 
     stats statstable( _self, sym_name );
@@ -130,10 +128,105 @@ void token::pause( bool pause, asset value )
     eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before pause" );
     const auto& st = *existing;
 
+    require_auth( st.issuer );
+
     statstable.modify( st, 0, [&]( auto& s ) {
        s.pause = pause;
     });
 }
+
+void token::timelock( account_name beneficiary,
+                      asset        lock_asset,
+                      uint64_t     release_time )
+{
+    auto sym = lock_asset.symbol;
+    eosio_assert( sym.is_valid(), "invalid symbol name" );
+
+    auto sym_name = sym.name();
+    stats statstable( _self, sym_name );
+    auto existing = statstable.find( sym_name );
+    eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before lock" );
+    const auto& st = *existing;
+    eosio_assert( st.pause == false, "token is paused" );
+    require_auth( st.issuer );
+
+    eosio_assert( lock_asset.is_valid(), "invalid asset" );
+    eosio_assert( lock_asset.amount > 0, "must lock positive asset" );
+
+    eosio_assert( lock_asset.symbol == st.supply.symbol, "symbol precision mismatch" );
+    eosio_assert( lock_asset.amount <= st.max_supply.amount - st.supply.amount, "lock asset exceeds available supply");
+
+    statstable.modify( st, 0, [&]( auto& s ) {
+       s.lock_supply += lock_asset;
+       s.supply += lock_asset;
+    });
+
+    lock_asset( beneficiary, lock_asset, release_time );
+}
+
+
+void token::lock_asset( account_name beneficiary,
+                        asset        lock_asset,
+                        uint64_t     release_time )
+{
+    depository depository_table( _self, lock_asset.symbol.name() );
+
+    depository_table.emplace( _self, [&]( auto& a ){
+      a.id = depository_table.available_primary_key();
+      a.lock_asset = lock_asset;
+      a.beneficiary = beneficiary;
+      a.release_time = release_time;
+    });
+}
+
+void token::release(account_name beneficiary, asset lock_asset){
+  auto sym = lock_asset.symbol;
+
+  eosio_assert( sym.is_valid(), "invalid symbol name" );
+
+  auto sym_name = sym.name();
+
+  depository depository_table( _self, sym_name );
+
+  auto beneficiary_index = depository_table.template get_index<N(bybeneficiary)>();
+
+  account_name beneficiary_acct = eosio::chain::string_to_name(beneficiary);
+
+  auto benefi_itr = beneficiary_index.find(beneficiary_acct);
+
+  while (benefi_itr != depository_table.end() && benefi_itr->beneficiary == customer_acct) {
+
+    if(lock_asset.symbol == benefi_itr.supply.symbol){
+
+        if(now() < benefi_itr.release_time){
+          continue;
+        }
+
+        depository_table.erase(benefi_itr.id);
+        
+        add_balance( beneficiary, benefi_itr.lock_asset, st.issuer );
+
+        if( beneficiary != st.issuer ) {
+           SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, beneficiary, benefi_itr.lock_asset, 'unlock asset'} );
+        }
+    }
+        benefi_itr++;
+  }
+
+
+  auto existing = depository_table.find( sym_name );
+  eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
+  const auto& st = *existing;
+  eosio_assert( st.pause == false, "token is paused" );
+  require_auth( st.issuer );
+  eosio_assert( quantity.is_valid(), "invalid quantity" );
+  eosio_assert( quantity.amount > 0, "must issue positive quantity" );
+
+
+
+  token.safeTransfer(beneficiary, amount);
+}
+
 
 } /// namespace eosio
 
