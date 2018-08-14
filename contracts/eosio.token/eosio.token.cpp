@@ -216,6 +216,11 @@ void token::release(account_name beneficiary_name,
         auto dep_itr = depos_table.find(benefi_itr->id);
 
         depos_table.erase(dep_itr);
+
+        statstable.modify( st, 0, [&]( auto& s ) {
+           s.lock_supply -= benefi_itr->lock_asset;
+        });
+
     }
         benefi_itr++;
   }
