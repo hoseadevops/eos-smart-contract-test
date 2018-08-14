@@ -161,70 +161,65 @@ void token::timelock( account_name beneficiary,
        s.supply += lock_asset;
     });
 
-    lock_asset( beneficiary, lock_asset, release_time );
+    lock_assets( beneficiary, lock_asset, release_time );
 }
 
 
-void token::lock_asset( account_name beneficiary,
+void token::lock_assets( account_name beneficiary,
                         asset        lock_asset,
                         uint64_t     release_time )
 {
-    depository depository_table( _self, lock_asset.symbol.name() );
+    depositorys depos_table( _self, lock_asset.symbol.name() );
 
-    depository_table.emplace( _self, [&]( auto& a ){
-      a.id = depository_table.available_primary_key();
+    depos_table.emplace( _self, [&]( auto& a ){
+      a.id = depos_table.available_primary_key();
       a.lock_asset = lock_asset;
       a.beneficiary = beneficiary;
       a.release_time = release_time;
     });
 }
 
-void token::release(account_name beneficiary, asset lock_asset){
+void token::release(account_name beneficiary_name,
+                    asset        lock_asset )
+{
   auto sym = lock_asset.symbol;
-
   eosio_assert( sym.is_valid(), "invalid symbol name" );
 
   auto sym_name = sym.name();
 
-  depository depository_table( _self, sym_name );
+  stats statstable( _self, sym_name );
 
-  auto beneficiary_index = depository_table.template get_index<N(bybeneficiary)>();
+  auto existing = statstable.find( sym_name );
+  eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before release" );
+  const auto& st = *existing;
 
-  account_name beneficiary_acct = eosio::chain::string_to_name(beneficiary);
+  depositorys depos_table( _self, sym_name );
 
-  auto benefi_itr = beneficiary_index.find(beneficiary_acct);
+  auto beneficiary_index = depos_table.get_index<N(bybeneficiary)>();
 
-  while (benefi_itr != depository_table.end() && benefi_itr->beneficiary == customer_acct) {
+  auto benefi_itr = beneficiary_index.find(beneficiary_name);
 
-    if(lock_asset.symbol == benefi_itr.supply.symbol){
+  while (benefi_itr != beneficiary_index.end() && benefi_itr->beneficiary == beneficiary_name) {
 
-        if(now() < benefi_itr.release_time){
+    if(lock_asset.symbol == benefi_itr->lock_asset.symbol){
+
+        if(now() < benefi_itr->release_time){
           continue;
         }
 
-        depository_table.erase(benefi_itr.id);
-        
-        add_balance( beneficiary, benefi_itr.lock_asset, st.issuer );
+        add_balance( beneficiary_name, benefi_itr->lock_asset, st.issuer );
 
-        if( beneficiary != st.issuer ) {
-           SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, beneficiary, benefi_itr.lock_asset, 'unlock asset'} );
+        if( beneficiary_name != st.issuer ) {
+           SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, beneficiary_name, benefi_itr->lock_asset, "unlock asset"} );
         }
+
+        auto dep_itr = depos_table.find(benefi_itr->id);
+
+        depos_table.erase(dep_itr);
     }
         benefi_itr++;
   }
 
-
-  auto existing = depository_table.find( sym_name );
-  eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
-  const auto& st = *existing;
-  eosio_assert( st.pause == false, "token is paused" );
-  require_auth( st.issuer );
-  eosio_assert( quantity.is_valid(), "invalid quantity" );
-  eosio_assert( quantity.amount > 0, "must issue positive quantity" );
-
-
-
-  token.safeTransfer(beneficiary, amount);
 }
 
 

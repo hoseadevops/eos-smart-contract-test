@@ -65,16 +65,16 @@ namespace eosio {
 
            uint64_t primary_key()const { return id; }
            account_name get_beneficiary() const { return beneficiary; }
-         }
+         };
 
          //typedef eosio::multi_index< tablename,  typename> table( code, scope);
          typedef eosio::multi_index<N(accounts), account> accounts;
          typedef eosio::multi_index<N(stat), currency> stats;
-         typedef eosio::multi_index<N(depository), depository, indexed_by< N(bybeneficiary), const_mem_fun<depository, account_name, &depository::get_beneficiary> > depository;
+         typedef eosio::multi_index<N(depository), depository, indexed_by< N(bybeneficiary), const_mem_fun<depository, account_name, &depository::get_beneficiary> > > depositorys;
 
          void sub_balance( account_name owner, asset value );
          void add_balance( account_name owner, asset value, account_name ram_payer );
-         void lock_asset( account_name beneficiary, asset lock_asset, uint64_t release_time );
+         void lock_assets( account_name beneficiary, asset lock_asset, uint64_t release_time );
 
       public:
          struct transfer_args {
