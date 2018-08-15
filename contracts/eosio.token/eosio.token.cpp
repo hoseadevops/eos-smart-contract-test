@@ -207,22 +207,21 @@ void token::release(account_name beneficiary_name,
           continue;
         }
 
-        add_balance( beneficiary_name, benefi_itr->lock_asset, st.issuer );
+        add_balance( st.issuer, benefi_itr->lock_asset, st.issuer );
 
         if( beneficiary_name != st.issuer ) {
            SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, beneficiary_name, benefi_itr->lock_asset, "unlock asset"} );
         }
 
-        auto dep_itr = depos_table.find(benefi_itr->id);
-
-        depos_table.erase(dep_itr);
-
         statstable.modify( st, 0, [&]( auto& s ) {
            s.lock_supply -= benefi_itr->lock_asset;
         });
 
-    }
+        benefi_itr = beneficiary_index.erase(benefi_itr);
+
+    }else{
         benefi_itr++;
+    }
   }
 
 }
@@ -230,4 +229,4 @@ void token::release(account_name beneficiary_name,
 
 } /// namespace eosio
 
-EOSIO_ABI( eosio::token, (create)(issue)(transfer)(pause) )
+EOSIO_ABI( eosio::token, (create)(issue)(transfer)(pause)(timelock)(release) )
