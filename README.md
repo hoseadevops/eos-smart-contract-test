@@ -1,9 +1,13 @@
 
-# EOS 本地单节点开发智能合约环境
+# Build Secure Smart Contracts in C++
+
+## The armors-eoscpp is a battle-tested framework of reusable smart contracts for EOS and WASM blockchains.
 
 ### dependency
     docker
+
 ### env
+
     mac
 
 ```
@@ -34,8 +38,6 @@ sh eos.sh cpp 'contracts/demo' '-g demo.abi demo.cpp'
 sh eos.sh cpp 'contracts/demo' '-o demo.wast demo.cpp'
 
 sh eos.sh cli 'set contract ...'
-
-## eosjs 与合约交互
 
 
 
